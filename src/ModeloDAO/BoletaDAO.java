@@ -32,13 +32,14 @@ public class BoletaDAO implements BoletaInterface{
     @Override
     public boolean insertar(BoletaDTO b) {
         try {
-            String sql = "INSERT INTO boleta (idcli, tolbol, fecbol, idusu) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO boleta (idcli, tolbol, fecbol, idusu, stabol) VALUES (?, ?, ?, ?)";
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
             ps.setInt(1, b.getCliente().getCodigo());
             ps.setFloat(2, b.getTotal());
             ps.setTimestamp(3, Timestamp.valueOf(b.getFecha()));
             ps.setInt(4, b.getUsuario().getCodigo());
+            ps.setInt(5, b.getStatus());
             ps.executeUpdate();
             conn.close();
             return true;
@@ -72,8 +73,23 @@ public class BoletaDAO implements BoletaInterface{
 
 
     @Override
-    public boolean actualizar(BoletaDTO c) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean actualizar(BoletaDTO b) {
+        try {
+            String sql = "update boleta set idcli=?, tolbol=?, fecbol=?, idusu=?, stabol=? where idbol = ?";
+            conn = con.getConexion();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, b.getCliente().getCodigo());
+            ps.setFloat(2, b.getTotal());
+            ps.setTimestamp(3, Timestamp.valueOf(b.getFecha()));
+            ps.setInt(4, b.getUsuario().getCodigo());
+            ps.setInt(5, b.getStatus());
+            ps.setString(6, b.getCodigo());
+            ps.executeUpdate();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(BoletaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     @Override
@@ -123,6 +139,7 @@ public class BoletaDAO implements BoletaInterface{
                 b.setCodigo(rs.getString("idbol"));
                 b.setFecha(rs.getTimestamp("fecbol").toLocalDateTime());
                 b.setTotal(rs.getFloat("tolbol"));
+                b.setStatus(rs.getInt("stabol"));
                 
                 c = new ClienteDTO();
                 c = cd.listarUno(rs.getInt("idcli"));
@@ -157,6 +174,7 @@ public class BoletaDAO implements BoletaInterface{
                 b.setCodigo(rs.getString("idbol"));
                 b.setFecha(rs.getTimestamp("fecbol").toLocalDateTime());
                 b.setTotal(rs.getFloat("tolbol"));
+                b.setStatus(rs.getInt("stabol"));
                 
                 c = new ClienteDTO();
                 c = cd.listarUno(rs.getInt("idcli"));

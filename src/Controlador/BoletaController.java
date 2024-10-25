@@ -35,6 +35,7 @@ public class BoletaController {
             x.addColumn("Nombre de Cliente");
             x.addColumn("Fecha");
             x.addColumn("Total");
+            x.addColumn("Estado del pago");
         }
         t.setModel(x);
     }
@@ -54,17 +55,19 @@ public class BoletaController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         listaBoletas = bd.listarTodo();
-        for(int i=0; i<listaBoletas.size(); i++){
-            Object fecha = listaBoletas.get(i).getFecha().format(formatter);
-            
+         for (BoletaDTO boleta : listaBoletas) {
+            Object fecha = boleta.getFecha().format(formatter);
+            Object estado = boleta.getStatus() == 0 ? "Pendiente" : "Pagado";
+
             Object[] data = {
-                listaBoletas.get(i).getCodigo(),
-                listaBoletas.get(i).getUsuario().getNombre(),
-                listaBoletas.get(i).getCliente().getNombre(),
+                boleta.getCodigo(),
+                boleta.getUsuario().getNombre(),
+                boleta.getCliente().getNombre(),
                 fecha,
-                listaBoletas.get(i).getTotal()
+                boleta.getTotal(),
+                estado
             };
-            x.addRow(data);
+            x.addRow(data); 
         }
     }
     
@@ -74,13 +77,15 @@ public class BoletaController {
         
         for(int i=0; i<datos.size(); i++){
             Object fecha = listaBoletas.get(i).getFecha().format(formatter);
-            
+             Object estado = listaBoletas.get(i).getStatus() == 0 ? "Pendiente" : "Pagado";
+             
             Object[] data = {
                 datos.get(i).getCodigo(),
                 datos.get(i).getUsuario().getNombre(),
                 datos.get(i).getCliente().getNombre(),
                 fecha,
-                datos.get(i).getTotal()
+                datos.get(i).getTotal(),
+                estado
             };
             x.addRow(data);
         }
@@ -163,5 +168,28 @@ public class BoletaController {
             JOptionPane.showMessageDialog(null, "Ocurrio un error al anular la boleta " + e);
             return false;
         }
+    }
+    
+    public static boolean CambiarEstado(JTable t){
+        try {
+            int fila = -1;
+            fila = t.getSelectedRow();
+            if (fila != -1) {
+                
+                BoletaDTO bol = bd.listarUno(t.getValueAt(fila, 0)+"");
+                bol.setStatus(bol.getStatus() == 0 ? 1 : 0);
+                bd.actualizar(bol);
+                listar();
+                JOptionPane.showMessageDialog(null, "Estado actualizado correctamente");
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione un elemento de la tabla de boletas");
+                return false;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Ocurrio un error al cambiar el estado " + e);
+            return false;
+        }
+        
     }
 }

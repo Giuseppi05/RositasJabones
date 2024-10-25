@@ -150,6 +150,7 @@ public class VentaController {
             b.setCliente(c);
             b.setUsuario(u);
             b.setFecha(fechaActual);
+            b.setStatus(0);
 
             if (bd.insertar(b)) {
                 String codigoBoleta = bd.obtenerUltimoIdBol(); 

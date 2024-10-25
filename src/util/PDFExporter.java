@@ -29,6 +29,7 @@ public class PDFExporter {
         Document document = new Document(PageSize.A4, 36, 36, 54, 36); // Márgenes más profesionales
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter formatterHour = DateTimeFormatter.ofPattern("hh:mm a");
+        String estado = boleta.getStatus() == 0 ? "Pendiente" : "Pagado";
 
         try {
             PdfWriter.getInstance(document, new FileOutputStream(ruta));
@@ -65,7 +66,8 @@ public class PDFExporter {
             boletaInfo.add(new Chunk("BOLETA DE VENTA\n", headerFont));
             boletaInfo.add(new Chunk("N° " + boleta.getCodigo() + "\n\n", headerFont));
             boletaInfo.add(new Chunk("Fecha: " + boleta.getFecha().format(formatter) + "\n", normalFont));
-            boletaInfo.add(new Chunk("Hora: " + boleta.getFecha().format(formatterHour), normalFont));
+            boletaInfo.add(new Chunk("Hora: " + boleta.getFecha().format(formatterHour) + "\n", normalFont));
+            boletaInfo.add(new Chunk("Estado: " + estado, normalFont));
             rightCell.addElement(boletaInfo);
             headerTable.addCell(rightCell);
 

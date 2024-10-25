@@ -93,6 +93,8 @@ public class Boletas extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         Search = new javax.swing.JLabel();
         DateSelect = new com.toedter.calendar.JDateChooser();
+        btnStatus = new util.PanelRound();
+        jLabel6 = new javax.swing.JLabel();
         CleanButton = new util.PanelRound();
         jLabel1 = new javax.swing.JLabel();
         bg = new javax.swing.JLabel();
@@ -544,6 +546,44 @@ public class Boletas extends javax.swing.JFrame {
         Boletas.add(Search, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 90, 30));
         Boletas.add(DateSelect, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 200, 30));
 
+        btnStatus.setBackground(new java.awt.Color(255, 96, 205));
+        btnStatus.setRoundBottomLeft(15);
+        btnStatus.setRoundBottomRight(15);
+        btnStatus.setRoundTopLeft(15);
+        btnStatus.setRoundTopRight(15);
+        btnStatus.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnStatusMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnStatusMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnStatusMouseExited(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("CAMBIAR ESTADO");
+
+        javax.swing.GroupLayout btnStatusLayout = new javax.swing.GroupLayout(btnStatus);
+        btnStatus.setLayout(btnStatusLayout);
+        btnStatusLayout.setHorizontalGroup(
+            btnStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnStatusLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        btnStatusLayout.setVerticalGroup(
+            btnStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+        );
+
+        Boletas.add(btnStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 460, 170, 40));
+
         CleanButton.setBackground(new java.awt.Color(255, 96, 205));
         CleanButton.setRoundBottomLeft(15);
         CleanButton.setRoundBottomRight(15);
@@ -792,6 +832,18 @@ public class Boletas extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_BoletaButtonMousePressed
 
+    private void btnStatusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnStatusMouseClicked
+        BoletaController.CambiarEstado(TableBoletas);
+    }//GEN-LAST:event_btnStatusMouseClicked
+
+    private void btnStatusMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnStatusMouseEntered
+        ColorMethods.Entered(btnStatus, new Color(204, 76, 164));
+    }//GEN-LAST:event_btnStatusMouseEntered
+
+    private void btnStatusMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnStatusMouseExited
+        ColorMethods.Exited(btnStatus, new Color(255,96,205));
+    }//GEN-LAST:event_btnStatusMouseExited
+
     /**
      * @param args the command line arguments
      */
@@ -857,12 +909,14 @@ public class Boletas extends javax.swing.JFrame {
     private javax.swing.JLabel UserLbl;
     private util.PanelRound VentasButton;
     private javax.swing.JLabel bg;
+    private util.PanelRound btnStatus;
     private javax.swing.JComboBox<String> cbxOrder;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private util.PanelRound menu;
     private javax.swing.JLabel ventaLbl;
