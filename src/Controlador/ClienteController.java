@@ -1,9 +1,11 @@
 package Controlador;
 
+import ModeloDAO.TipoDocumentoDAO;
 import ModeloDAO.ClienteDAO;
 import ModeloDAO.DistritoDAO;
 import ModeloDTO.ClienteDTO;
 import ModeloDTO.DistritoDTO;
+import ModeloDTO.TipoDocumentoDTO;
 import java.util.ArrayList;
 import java.util.Comparator;
 import javax.swing.JComboBox;
@@ -16,21 +18,25 @@ public class ClienteController {
     
     static ClienteDAO cd = new ClienteDAO();
     static DistritoDAO disd = new DistritoDAO();
+    static TipoDocumentoDAO tdd = new TipoDocumentoDAO();
     
     static ClienteDTO c = new ClienteDTO();
     
     static ArrayList<ClienteDTO> listaClientes = new ArrayList<>();
+    static ArrayList<TipoDocumentoDTO> listaTipoDocumento = new ArrayList<>();
     
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
     private static final String CELLPHONE_PATTERN = "9\\d{8}";
     private static final String DNI_PATTERN = "\\d{8}";
+    private static final String EXTRANJERIA_PATTERN = "\\d{12}";
     private static final String LANDLINE_PATTERN = "^\\(0\\d{1,2}\\)\\s?\\d{6,7}$";
     
     //MANEJO DE DATOS
     public static void mostrarCabecera(JTable t) {
         if (x.getColumnCount() == 0) {
             x.addColumn("Código");
-            x.addColumn("DNI");
+            x.addColumn("Tipo de Documento");
+            x.addColumn("Número de Documento");
             x.addColumn("Nombre");
             x.addColumn("Telefono");
             x.addColumn("Correo");
@@ -48,6 +54,7 @@ public class ClienteController {
         for(int i=0; i<listaClientes.size(); i++){
             Object[] data = {
                 listaClientes.get(i).getCodigo(),
+                listaClientes.get(i).getTipoDocumento().getNombre(),
                 listaClientes.get(i).getDNI(),
                 listaClientes.get(i).getNombre(), 
                 listaClientes.get(i).getTelefono(),
@@ -66,6 +73,7 @@ public class ClienteController {
         for(int i=0; i<datos.size(); i++){
             Object[] data = {
                 datos.get(i).getCodigo(),
+                datos.get(i).getTipoDocumento().getNombre(),
                 datos.get(i).getDNI(),
                 datos.get(i).getNombre(), 
                 datos.get(i).getTelefono(),
@@ -133,10 +141,20 @@ public class ClienteController {
         }
     }
     
-    public static ClienteDTO BuscarClientePorDNI(JComboBox<String> cbx) {
-        String dni = JOptionPane.showInputDialog("Ingrese un número de DNI");
+    public static void mostrarTipoDocumento(JComboBox c){
+        c.removeAllItems();
         
-        if(dni.matches(DNI_PATTERN)){
+        listaTipoDocumento = tdd.listarTodo();
+        
+        for (int i = 0; i < listaTipoDocumento.size(); i++) {
+            c.addItem(listaTipoDocumento.get(i).getNombre());
+        }
+    }
+    
+    public static ClienteDTO BuscarClientePorDNI(JComboBox<String> cbx) {
+        String dni = JOptionPane.showInputDialog("Ingrese un número de documento");
+        
+        if(dni.matches(DNI_PATTERN) || dni.matches(EXTRANJERIA_PATTERN)){
             ClienteDTO cliente = cd.listarUnoDNI(dni);
             listaClientes = cd.listarTodo();
 
@@ -149,11 +167,11 @@ public class ClienteController {
                 }
                 return cliente;
             } else {
-                JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con el DNI ingresado");
+                JOptionPane.showMessageDialog(null, "No se encontró ningún cliente con el número de documento ingresado");
                 return null;
             }
         }  else {
-            JOptionPane.showMessageDialog(null, "El DNI ingresado no es válido");
+            JOptionPane.showMessageDialog(null, "El número de documento ingresado no es válido");
             return null;
         }
     }
@@ -171,16 +189,31 @@ public class ClienteController {
         }
     }
     //VALIDACIONES
+    public static void ComprobarTipoTel(String txt, JComboBox j) {
+        j.setSelectedIndex(txt.matches(CELLPHONE_PATTERN) ? 0 : 1);
+    }
+
+    
     public static boolean ValidarCorreo(String txt){
         return txt.matches(EMAIL_PATTERN);
     }
     
-    public static boolean ValidarTelefono(String txt){
-        return (txt.matches(CELLPHONE_PATTERN) || txt.matches(LANDLINE_PATTERN)) ;
+    public static boolean ValidarTelefono(String txt, JComboBox j){
+        return switch (j.getSelectedIndex()) {
+            case 0 -> txt.matches(CELLPHONE_PATTERN);
+            case 1 -> txt.matches(LANDLINE_PATTERN);
+            default -> false;
+        };
     }
     
-    public static boolean ValidarDNI(String txt){
-        return txt.matches(DNI_PATTERN);
+    public static boolean ValidarDNI(String txt, JComboBox j){
+        TipoDocumentoDTO t = tdd.listarUnoNom(j.getSelectedItem()+"");
+        
+        return switch (t.getCodigo()) {
+            case 1 -> txt.matches(DNI_PATTERN);
+            case 2 -> txt.matches(EXTRANJERIA_PATTERN);
+            default -> false;
+        };
     }
     
     public static boolean ValidarVacio(String nombre, String dni, String telefono, String correo, String direccion, JComboBox pro, JComboBox dep, JComboBox dis) {
@@ -205,7 +238,9 @@ public class ClienteController {
     }
     
     //CRUD
-    public static boolean Insertar(String nombre, String dni, String telefono, String correo, String direccion, JComboBox pro, JComboBox dep, JComboBox dis){
+    public static boolean Insertar(String nombre, String dni, 
+            String telefono, String correo, String direccion, 
+            JComboBox pro, JComboBox dep, JComboBox dis, JComboBox tipoDocumento, JComboBox tipoTelefono){
         listaClientes = cd.listarTodo();
         
         try {
@@ -214,8 +249,8 @@ public class ClienteController {
                 return false;
             }
             
-            if(!ValidarDNI(dni)){
-                JOptionPane.showMessageDialog(null, "Por favor favor ingrese un DNI válido");
+            if(!ValidarDNI(dni, tipoDocumento)){
+                JOptionPane.showMessageDialog(null, "Por favor favor ingrese un número de documento válido");
                 return false;
             }
             
@@ -224,7 +259,7 @@ public class ClienteController {
                 return false;
             }
             
-            if (!ValidarTelefono(telefono)) {
+            if (!ValidarTelefono(telefono, tipoTelefono)) {
                 JOptionPane.showMessageDialog(null, "Por favor ingrese un telefono válido");
                 return false;
             }
@@ -240,7 +275,10 @@ public class ClienteController {
                 return false;
             }
             
+            TipoDocumentoDTO tipdoc = tdd.listarUnoNom(tipoDocumento.getSelectedItem()+"");
+            
             c.setNombre(nombre);
+            c.setTipoDocumento(tipdoc);
             c.setDNI(dni);
             c.setTelefono(telefono);
             c.setCorreo(correo);
@@ -258,7 +296,9 @@ public class ClienteController {
         }
     }
     
-    public static boolean Editar(ClienteDTO c, String nombre, String dni, String telefono, String correo, String direccion, JComboBox pro, JComboBox dep, JComboBox dis){
+    public static boolean Editar(ClienteDTO c, String nombre, String dni, 
+            String telefono, String correo, String direccion, 
+            JComboBox pro, JComboBox dep, JComboBox dis, JComboBox tipoDocumento, JComboBox tipoTelefono){
         listaClientes = cd.listarTodo();
         
         try {
@@ -267,8 +307,8 @@ public class ClienteController {
                 return false;
             }
             
-            if(!ValidarDNI(dni)){
-                JOptionPane.showMessageDialog(null, "Por favor favor ingrese un DNI válido");
+            if(!ValidarDNI(dni, tipoDocumento)){
+                JOptionPane.showMessageDialog(null, "Por favor favor ingrese un número de documento válido");
                 return false;
             }
             
@@ -277,7 +317,7 @@ public class ClienteController {
                 return false;
             }
             
-            if (!ValidarTelefono(telefono)) {
+            if (!ValidarTelefono(telefono,tipoTelefono)) {
                 JOptionPane.showMessageDialog(null, "Por favor ingrese un telefono válido");
                 return false;
             }
@@ -293,7 +333,10 @@ public class ClienteController {
                 return false;
             }
             
+            TipoDocumentoDTO tipdoc = tdd.listarUnoNom(tipoDocumento.getSelectedItem()+"");
+            
             c.setNombre(nombre);
+            c.setTipoDocumento(tipdoc);
             c.setDNI(dni);
             c.setTelefono(telefono);
             c.setCorreo(correo);

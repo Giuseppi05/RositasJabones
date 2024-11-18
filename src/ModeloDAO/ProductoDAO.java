@@ -2,6 +2,7 @@ package ModeloDAO;
 
 import Interfaces.ProductoInterface;
 import ModeloDTO.ProductoDTO;
+import ModeloDTO.TipoProductoDTO;
 import config.conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,21 +18,23 @@ public class ProductoDAO implements ProductoInterface{
     PreparedStatement ps;
     ResultSet rs;
     ProductoDTO p;
+    TipoProductoDAO tpd = new TipoProductoDAO();
     
     @Override
     public boolean insertar(ProductoDTO p) {
         try {
-            String sql = "insert into producto (nompro, stkpro, prepro, vtopro) values (?, ?, ?, ?)";
+            String sql = "insert into producto (tipo, nompro, stkpro, prepro, vtopro) values (?, ?, ?, ?, ?)";
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
-            ps.setString(1, p.getNombre());
-            ps.setInt(2, p.getStock());
-            ps.setFloat(3, p.getPrecio());
+            ps.setInt(1, p.getTipo().getCodigo());
+            ps.setString(2, p.getNombre());
+            ps.setInt(3, p.getStock());
+            ps.setFloat(4, p.getPrecio());
             
             if (p.getVencimiento() != null) {
-                ps.setDate(4, new java.sql.Date(p.getVencimiento().getTime()));
+                ps.setDate(5, new java.sql.Date(p.getVencimiento().getTime()));
             } else {
-                ps.setNull(4, java.sql.Types.DATE);
+                ps.setNull(5, java.sql.Types.DATE);
             }
             ps.executeUpdate();
             conn.close();
@@ -44,16 +47,18 @@ public class ProductoDAO implements ProductoInterface{
     @Override
     public boolean actualizar(ProductoDTO p) {
         try {
-            String sql = "update producto set nompro=?, stkpro=?, prepro=?, vtopro=? where idpro = "+p.getCodigo();
+            String sql = "update producto set tipo=?, nompro=?, stkpro=?, prepro=?, vtopro=? where idpro = "+p.getCodigo();
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
-            ps.setString(1, p.getNombre());
-            ps.setInt(2, p.getStock());
-            ps.setFloat(3, p.getPrecio());
+            ps.setInt(1, p.getTipo().getCodigo());
+            ps.setString(2, p.getNombre());
+            ps.setInt(3, p.getStock());
+            ps.setFloat(4, p.getPrecio());
+            
             if (p.getVencimiento() != null) {
-                ps.setDate(4, new java.sql.Date(p.getVencimiento().getTime()));
+                ps.setDate(5, new java.sql.Date(p.getVencimiento().getTime()));
             } else {
-                ps.setNull(4, java.sql.Types.DATE);
+                ps.setNull(5, java.sql.Types.DATE);
             }
             ps.executeUpdate();
             conn.close();
@@ -94,6 +99,9 @@ public class ProductoDAO implements ProductoInterface{
                 p.setStock(rs.getInt("stkpro"));
                 p.setPrecio(rs.getFloat("prepro"));
                 p.setVencimiento(rs.getDate("vtopro"));
+                
+                TipoProductoDTO tp = tpd.listarUno(rs.getInt("tipo"));
+                p.setTipo(tp);
             }
             conn.close();
         } catch (SQLException ex) {
@@ -118,6 +126,9 @@ public class ProductoDAO implements ProductoInterface{
                 p.setStock(rs.getInt("stkpro"));
                 p.setPrecio(rs.getFloat("prepro"));
                 p.setVencimiento(rs.getDate("vtopro"));
+                
+                TipoProductoDTO tp = tpd.listarUno(rs.getInt("tipo"));
+                p.setTipo(tp);
             }
             conn.close();
         } catch (SQLException ex) {
@@ -141,6 +152,8 @@ public class ProductoDAO implements ProductoInterface{
                 p.setStock(rs.getInt("stkpro"));
                 p.setPrecio(rs.getFloat("prepro"));
                 p.setVencimiento(rs.getDate("vtopro"));
+                TipoProductoDTO tp = tpd.listarUno(rs.getInt("tipo"));
+                p.setTipo(tp);
                 vp.add(p);
             }
             conn.close();

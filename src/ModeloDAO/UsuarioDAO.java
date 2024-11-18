@@ -1,4 +1,3 @@
-
 package ModeloDAO;
 
 import Interfaces.UsuarioInterface;
@@ -9,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,13 +26,12 @@ public class UsuarioDAO implements UsuarioInterface{
     @Override
     public boolean insertar(UsuarioDTO u) {
         try {
-            String sql = "insert into usuario (nomusu, idrol, mailusu, passusu) values (?, ?, ?, ?)";
+            String sql = "insert into usuario (nomusu, idrol, mailusu) values (?, ?, ?)";
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
             ps.setString(1, u.getNombre());
             ps.setInt(2, u.getRol().getCodigo());
             ps.setString(3, u.getCorreo());
-            ps.setString(4, u.getContraseña());
             ps.executeUpdate();
             conn.close();
         } catch (SQLException ex) {
@@ -43,13 +43,16 @@ public class UsuarioDAO implements UsuarioInterface{
     @Override
     public boolean actualizar(UsuarioDTO u) {
         try {
-            String sql = "update usuario set nomusu=?, idrol=?, mailusu=?, passusu=? where idusu = "+u.getCodigo();
+            String sql = "update usuario set nomusu=?, idrol=?, mailusu=?, passusu=?, claveTemp = ?, fechaTemp = ? where idusu = "+u.getCodigo();
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
             ps.setString(1, u.getNombre());
             ps.setInt(2, u.getRol().getCodigo());
             ps.setString(3, u.getCorreo());
             ps.setString(4, u.getContraseña());
+            ps.setString(5, u.getClaveTemp());
+            LocalDateTime fecha = u.getFechaTemp();
+            ps.setTimestamp(6, fecha != null ? Timestamp.valueOf(u.getFechaTemp()) : null);
             ps.executeUpdate();
             conn.close();
         } catch (SQLException ex) {
@@ -91,6 +94,9 @@ public class UsuarioDAO implements UsuarioInterface{
                 u.setNombre(rs.getString("nomusu"));
                 u.setCorreo(rs.getString("mailusu"));
                 u.setContraseña(rs.getString("passusu"));
+                u.setClaveTemp(rs.getString("claveTemp"));
+                Timestamp fechaTemp = rs.getTimestamp("fechaTemp");
+                u.setFechaTemp(fechaTemp != null ? fechaTemp.toLocalDateTime() : null);
             }
             conn.close();
         } catch (SQLException ex) {
@@ -117,6 +123,9 @@ public class UsuarioDAO implements UsuarioInterface{
                 u.setNombre(rs.getString("nomusu"));
                 u.setCorreo(rs.getString("mailusu"));
                 u.setContraseña(rs.getString("passusu"));
+                u.setClaveTemp(rs.getString("claveTemp"));
+                Timestamp fechaTemp = rs.getTimestamp("fechaTemp");
+                u.setFechaTemp(fechaTemp != null ? fechaTemp.toLocalDateTime() : null);
             }
             conn.close();
         } catch (SQLException ex) {
@@ -142,6 +151,9 @@ public class UsuarioDAO implements UsuarioInterface{
                 u.setNombre(rs.getString("nomusu"));
                 u.setCorreo(rs.getString("mailusu"));
                 u.setContraseña(rs.getString("passusu"));
+                u.setClaveTemp(rs.getString("claveTemp"));
+                Timestamp fechaTemp = rs.getTimestamp("fechaTemp");
+                u.setFechaTemp(fechaTemp != null ? fechaTemp.toLocalDateTime() : null);
                 vu.add(u);
             }
             conn.close();

@@ -6,6 +6,7 @@ import Vistas.Producto.Productos;
 import ModeloDTO.UsuarioDTO;
 import Vistas.Boleta.Boletas;
 import Vistas.Cliente.Clientes;
+import Vistas.Reportes.Reportes;
 import Vistas.Venta.Venta;
 import config.UserSession;
 import java.awt.Color;
@@ -14,6 +15,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 import util.ColorMethods;
 import util.ImageLoader;
+import util.InactividadUtil;
 
 public class Principal extends javax.swing.JFrame {
     static boolean Ven = false;
@@ -44,7 +46,6 @@ public class Principal extends javax.swing.JFrame {
         ImageLoader.setImageToLabelFromResources(ReportLbl, "/imagenes/report.png");
         ImageLoader.setImageToLabelFromResources(Logoutlbl, "/imagenes/logout.png");
         
-        
         //ALERTAS DE STOCK
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -52,6 +53,8 @@ public class Principal extends javax.swing.JFrame {
                 ProductosController.AlertasBajoStock();
             }
         });
+        
+        InactividadUtil.activarTemporizador(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -576,7 +579,9 @@ public class Principal extends javax.swing.JFrame {
 
     private void ReportButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportButtonMouseClicked
        if (!Ven){
-               
+               Reportes r = new Reportes();
+               r.setVisible(true);
+               this.dispose();
         } else JOptionPane.showMessageDialog(this, "Usted no cuenta con los permisos para ingresar a esta sección");
         
     }//GEN-LAST:event_ReportButtonMouseClicked
@@ -584,6 +589,7 @@ public class Principal extends javax.swing.JFrame {
     private void LogOutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogOutButtonMouseClicked
         UserSession.setUsuario(null);
         this.dispose();
+        InactividadUtil.detenerTemporizador();
         login.setVisible(true);
     }//GEN-LAST:event_LogOutButtonMouseClicked
 

@@ -6,6 +6,7 @@ import Vistas.Boleta.Boletas;
 import Vistas.Login;
 import Vistas.Principal;
 import Vistas.Producto.Productos;
+import Vistas.Reportes.Reportes;
 import Vistas.Usuario.Usuarios;
 import Vistas.Venta.Venta;
 import config.UserSession;
@@ -13,6 +14,7 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 import util.ColorMethods;
 import util.ImageLoader;
+import util.InactividadUtil;
 
 public class Clientes extends javax.swing.JFrame {
     static Login login = new Login();
@@ -58,6 +60,8 @@ public class Clientes extends javax.swing.JFrame {
         ClientesButton.setToolTipText("Clientes");
         UserButton.setToolTipText("Usuarios");
         ReportButton.setToolTipText("Reportes");
+        
+        InactividadUtil.activarTemporizador(this);
     }
     
     @SuppressWarnings("unchecked")
@@ -651,8 +655,10 @@ public class Clientes extends javax.swing.JFrame {
     }//GEN-LAST:event_cbxOrderActionPerformed
 
     private void ReportButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportButtonMouseClicked
-        if (!Ven){
-
+        if (!Ven) {
+            Reportes r = new Reportes();
+            r.setVisible(true);
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Usted no cuenta con los permisos para ingresar a esta sección");
         }
@@ -732,7 +738,7 @@ public class Clientes extends javax.swing.JFrame {
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
         Principal p = new Principal();
         p.setVisible(true);
-        this.setVisible(false);
+        this.dispose();
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void HomeButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseEntered
@@ -781,6 +787,7 @@ public class Clientes extends javax.swing.JFrame {
     private void LogOutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogOutButtonMouseClicked
         UserSession.setUsuario(null);
         this.dispose();
+        InactividadUtil.detenerTemporizador();
         login.setVisible(true);
     }//GEN-LAST:event_LogOutButtonMouseClicked
 

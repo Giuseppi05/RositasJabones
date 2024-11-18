@@ -7,12 +7,14 @@ import Vistas.Boleta.Boletas;
 import Vistas.Cliente.Clientes;
 import Vistas.Login;
 import Vistas.Principal;
+import Vistas.Reportes.Reportes;
 import Vistas.Venta.Venta;
 import config.UserSession;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import util.ColorMethods;
 import util.ImageLoader;
+import util.InactividadUtil;
 
 public class Usuarios extends javax.swing.JFrame {
     static Login login = new Login();
@@ -56,6 +58,8 @@ public class Usuarios extends javax.swing.JFrame {
         ClientesButton.setToolTipText("Clientes");
         UserButton.setToolTipText("Usuarios");
         ReportButton.setToolTipText("Reportes");
+        
+        InactividadUtil.activarTemporizador(this);
     }
     
     @SuppressWarnings("unchecked")
@@ -82,6 +86,8 @@ public class Usuarios extends javax.swing.JFrame {
         HomeLbl = new javax.swing.JLabel();
         DeleteButton = new util.PanelRound();
         jLabel4 = new javax.swing.JLabel();
+        BtnClave = new util.PanelRound();
+        jLabel6 = new javax.swing.JLabel();
         EditButton = new util.PanelRound();
         jLabel1 = new javax.swing.JLabel();
         LogOutButton = new util.PanelRound();
@@ -447,6 +453,44 @@ public class Usuarios extends javax.swing.JFrame {
 
         Users.add(DeleteButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 460, 140, 40));
 
+        BtnClave.setBackground(new java.awt.Color(255, 96, 205));
+        BtnClave.setRoundBottomLeft(15);
+        BtnClave.setRoundBottomRight(15);
+        BtnClave.setRoundTopLeft(15);
+        BtnClave.setRoundTopRight(15);
+        BtnClave.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BtnClaveMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                BtnClaveMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                BtnClaveMouseExited(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("GENERAR CLAVE TEMPORAL");
+
+        javax.swing.GroupLayout BtnClaveLayout = new javax.swing.GroupLayout(BtnClave);
+        BtnClave.setLayout(BtnClaveLayout);
+        BtnClaveLayout.setHorizontalGroup(
+            BtnClaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BtnClaveLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        BtnClaveLayout.setVerticalGroup(
+            BtnClaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+        );
+
+        Users.add(BtnClave, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 120, 270, 30));
+
         EditButton.setBackground(new java.awt.Color(255, 96, 205));
         EditButton.setRoundBottomLeft(15);
         EditButton.setRoundBottomRight(15);
@@ -734,7 +778,7 @@ public class Usuarios extends javax.swing.JFrame {
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
        Principal p = new Principal();
        p.setVisible(true);
-       this.setVisible(false);
+       this.dispose();
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void txtSearchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSearchFocusLost
@@ -823,6 +867,7 @@ public class Usuarios extends javax.swing.JFrame {
     private void LogOutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogOutButtonMouseClicked
         UserSession.setUsuario(null);
         this.dispose();
+        InactividadUtil.detenerTemporizador();
         login.setVisible(true);
     }//GEN-LAST:event_LogOutButtonMouseClicked
 
@@ -832,8 +877,10 @@ public class Usuarios extends javax.swing.JFrame {
     }//GEN-LAST:event_cbxOrderActionPerformed
 
     private void ReportButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportButtonMouseClicked
-        if (!Ven){
-            
+        if (!Ven) {
+            Reportes r = new Reportes();
+            r.setVisible(true);
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Usted no cuenta con los permisos para ingresar a esta sección");
         }
@@ -862,6 +909,22 @@ public class Usuarios extends javax.swing.JFrame {
         b.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_BoletaButtonMouseClicked
+
+    private void BtnClaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnClaveMouseClicked
+        if (!Ven){
+            UsuarioController.GenerarClave(TableUser);
+        } else {
+            JOptionPane.showMessageDialog(this, "Usted no cuenta con los permisos para ingresar a esta sección");
+        }
+    }//GEN-LAST:event_BtnClaveMouseClicked
+
+    private void BtnClaveMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnClaveMouseEntered
+        ColorMethods.Entered(BtnClave, new Color(204, 76, 164));
+    }//GEN-LAST:event_BtnClaveMouseEntered
+
+    private void BtnClaveMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnClaveMouseExited
+        ColorMethods.Exited(BtnClave, new Color(255,96,205));
+    }//GEN-LAST:event_BtnClaveMouseExited
 
     /**
      * @param args the command line arguments
@@ -908,6 +971,7 @@ public class Usuarios extends javax.swing.JFrame {
     private util.PanelRound AddButton;
     private util.PanelRound BoletaButton;
     private javax.swing.JLabel BoletaLbl;
+    private util.PanelRound BtnClave;
     private javax.swing.JLabel ClienteLbl;
     private util.PanelRound ClientesButton;
     private util.PanelRound DeleteButton;
@@ -933,6 +997,7 @@ public class Usuarios extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private util.PanelRound menu;
     private javax.swing.JTextField txtSearch;

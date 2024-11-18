@@ -14,7 +14,16 @@ public class ClienteDTO {
     DistritoDTO Distrito;
     ProvinciaDTO Provincia;
     DepartamentoDTO Departamento;
+    TipoDocumentoDTO TipoDocumento;
 
+    public TipoDocumentoDTO getTipoDocumento() {
+        return TipoDocumento;
+    }
+
+    public void setTipoDocumento(TipoDocumentoDTO TipoDocumento) {
+        this.TipoDocumento = TipoDocumento;
+    }
+    
     public int getCodigo() {
         return Codigo;
     }

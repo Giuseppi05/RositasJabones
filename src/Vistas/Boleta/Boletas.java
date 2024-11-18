@@ -3,18 +3,22 @@ package Vistas.Boleta;
 
 import Controlador.BoletaController;
 import ModeloDAO.BoletaDAO;
+import ModeloDTO.BoletaDTO;
 import ModeloDTO.UsuarioDTO;
 import Vistas.Cliente.Clientes;
 import Vistas.Login;
 import Vistas.Principal;
 import Vistas.Producto.Productos;
+import Vistas.Reportes.Reportes;
 import Vistas.Usuario.Usuarios;
 import Vistas.Venta.Venta;
 import config.UserSession;
 import java.awt.Color;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import util.ColorMethods;
 import util.ImageLoader;
+import util.InactividadUtil;
 
 public class Boletas extends javax.swing.JFrame {
     static Login login = new Login();
@@ -26,7 +30,6 @@ public class Boletas extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
        
-        
         usuario = UserSession.getUsuario();
         Ven = false;
         
@@ -59,6 +62,8 @@ public class Boletas extends javax.swing.JFrame {
         ClientesButton.setToolTipText("Clientes");
         UserButton.setToolTipText("Usuarios");
         ReportButton.setToolTipText("Reportes");
+        
+        InactividadUtil.activarTemporizador(this);
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -92,11 +97,14 @@ public class Boletas extends javax.swing.JFrame {
         TableBoletas = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         Search = new javax.swing.JLabel();
-        DateSelect = new com.toedter.calendar.JDateChooser();
+        FechaInicio = new com.toedter.calendar.JDateChooser();
         btnStatus = new util.PanelRound();
         jLabel6 = new javax.swing.JLabel();
         CleanButton = new util.PanelRound();
         jLabel1 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        FechaFin = new com.toedter.calendar.JDateChooser();
+        jLabel8 = new javax.swing.JLabel();
         bg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -520,7 +528,7 @@ public class Boletas extends javax.swing.JFrame {
             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
         );
 
-        Boletas.add(FilterButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 80, 90, 30));
+        Boletas.add(FilterButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 120, 90, 30));
 
         TableBoletas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -542,9 +550,9 @@ public class Boletas extends javax.swing.JFrame {
         jLabel3.setText("Boletas");
         Boletas.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, -1, -1));
 
-        Search.setText("Filtrar por fecha:");
-        Boletas.add(Search, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 90, 30));
-        Boletas.add(DateSelect, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 200, 30));
+        Search.setText("Filtrar por rango de fecha:");
+        Boletas.add(Search, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 140, 30));
+        Boletas.add(FechaInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 80, 170, 30));
 
         btnStatus.setBackground(new java.awt.Color(255, 96, 205));
         btnStatus.setRoundBottomLeft(15);
@@ -620,7 +628,14 @@ public class Boletas extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
         );
 
-        Boletas.add(CleanButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 80, 90, 30));
+        Boletas.add(CleanButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 120, 90, 30));
+
+        jLabel7.setText("Desde:");
+        Boletas.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 80, -1, 30));
+        Boletas.add(FechaFin, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 80, 180, 30));
+
+        jLabel8.setText("Hasta:");
+        Boletas.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 80, -1, 30));
 
         bg.setFocusable(false);
         bg.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -660,8 +675,10 @@ public class Boletas extends javax.swing.JFrame {
     }//GEN-LAST:event_cbxOrderActionPerformed
 
     private void ReportButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportButtonMouseClicked
-        if (!Ven){
-
+        if (!Ven) {
+            Reportes r = new Reportes();
+            r.setVisible(true);
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Usted no cuenta con los permisos para ingresar a esta sección");
         }
@@ -753,7 +770,7 @@ public class Boletas extends javax.swing.JFrame {
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
         Principal p = new Principal();
         p.setVisible(true);
-        this.setVisible(false);
+        this.dispose();
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void HomeButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseEntered
@@ -767,6 +784,7 @@ public class Boletas extends javax.swing.JFrame {
     private void LogOutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogOutButtonMouseClicked
         UserSession.setUsuario(null);
         this.dispose();
+        InactividadUtil.detenerTemporizador();
         login.setVisible(true);
     }//GEN-LAST:event_LogOutButtonMouseClicked
 
@@ -795,16 +813,13 @@ public class Boletas extends javax.swing.JFrame {
         ColorMethods.Exited(ExpandButton);
     }//GEN-LAST:event_ExpandButtonMouseExited
 
-    private void bgMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bgMouseClicked
-
-    }//GEN-LAST:event_bgMouseClicked
-
     private void BoletasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BoletasMouseClicked
 
     }//GEN-LAST:event_BoletasMouseClicked
 
     private void CleanButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CleanButtonMouseClicked
-        DateSelect.setDate(null);
+        FechaInicio.setDate(null);
+        FechaFin.setDate(null);
         BoletaController.listar();
     }//GEN-LAST:event_CleanButtonMouseClicked
 
@@ -817,7 +832,12 @@ public class Boletas extends javax.swing.JFrame {
     }//GEN-LAST:event_CleanButtonMouseExited
 
     private void FilterButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FilterButtonMouseClicked
-        BoletaController.listar(BoletaController.filtrarPorFecha(DateSelect));
+        ArrayList<BoletaDTO> datosFiltrados = BoletaController.filtrarPorFecha(FechaInicio, FechaFin);
+        if(datosFiltrados != null){
+            BoletaController.listar(datosFiltrados);
+        } else {
+            BoletaController.listar();
+        }
     }//GEN-LAST:event_FilterButtonMouseClicked
 
     private void FilterButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FilterButtonMouseEntered
@@ -843,6 +863,10 @@ public class Boletas extends javax.swing.JFrame {
     private void btnStatusMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnStatusMouseExited
         ColorMethods.Exited(btnStatus, new Color(255,96,205));
     }//GEN-LAST:event_btnStatusMouseExited
+
+    private void bgMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bgMouseClicked
+
+    }//GEN-LAST:event_bgMouseClicked
 
     /**
      * @param args the command line arguments
@@ -892,8 +916,9 @@ public class Boletas extends javax.swing.JFrame {
     private util.PanelRound CleanButton;
     private javax.swing.JLabel ClienteLbl;
     private util.PanelRound ClientesButton;
-    private com.toedter.calendar.JDateChooser DateSelect;
     private util.PanelRound ExpandButton;
+    private com.toedter.calendar.JDateChooser FechaFin;
+    private com.toedter.calendar.JDateChooser FechaInicio;
     private util.PanelRound FilterButton;
     private util.PanelRound HomeButton;
     private javax.swing.JLabel HomeLbl;
@@ -917,6 +942,8 @@ public class Boletas extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private util.PanelRound menu;
     private javax.swing.JLabel ventaLbl;

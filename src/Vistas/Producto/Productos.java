@@ -10,6 +10,7 @@ import Vistas.Boleta.Boletas;
 import Vistas.Cliente.Clientes;
 import Vistas.Login;
 import Vistas.Principal;
+import Vistas.Reportes.Reportes;
 import Vistas.Usuario.Usuarios;
 import Vistas.Venta.Venta;
 import config.UserSession;
@@ -17,6 +18,7 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 import util.ColorMethods;
 import util.ImageLoader;
+import util.InactividadUtil;
 
 public class Productos extends javax.swing.JFrame {
     static Login login = new Login();
@@ -30,6 +32,7 @@ public class Productos extends javax.swing.JFrame {
         ProductosController.mostrarCabecera(TableProducts);
         ColorMethods.Entered(ProductButton);
         ProductosController.listar();
+        ProductosController.mostrarTipos(Tipo, true);
         
         usuario = UserSession.getUsuario();
         Ven = false;
@@ -41,6 +44,8 @@ public class Productos extends javax.swing.JFrame {
             DeleteButton.setEnabled(false);
             EditButton.setEnabled(false);
         }
+        
+        Tipo.setSelectedIndex(0);
         
         //IMAGENES
         ImageLoader.setImageToLabelFromResources(bg, "/imagenes/fondo.png");
@@ -62,12 +67,16 @@ public class Productos extends javax.swing.JFrame {
         ClientesButton.setToolTipText("Clientes");
         UserButton.setToolTipText("Usuarios");
         ReportButton.setToolTipText("Reportes");
+        
+        InactividadUtil.activarTemporizador(this);
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         Users = new javax.swing.JPanel();
+        Tipo = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         cbxOrder = new javax.swing.JComboBox<>();
         menu = new util.PanelRound();
@@ -114,10 +123,20 @@ public class Productos extends javax.swing.JFrame {
         });
         Users.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        Tipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TipoActionPerformed(evt);
+            }
+        });
+        Users.add(Tipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 120, 210, 30));
+
+        jLabel6.setText("Filtrar por tipo:");
+        Users.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 120, -1, 30));
+
         jLabel5.setText("Ordenar por:");
         Users.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 126, -1, 20));
 
-        cbxOrder.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Código", "Nombre", "Stock", "Precio", "Fecha de Vencimiento" }));
+        cbxOrder.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Código", "Nombre", "Stock", "Precio", "Fecha de Vencimiento", "Tipo de producto" }));
         cbxOrder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbxOrderActionPerformed(evt);
@@ -642,7 +661,9 @@ public class Productos extends javax.swing.JFrame {
 
     private void ReportButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportButtonMouseClicked
         if (!Ven){
-
+            Reportes r = new Reportes();
+            r.setVisible(true);
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Usted no cuenta con los permisos para ingresar a esta sección");
         }
@@ -721,7 +742,7 @@ public class Productos extends javax.swing.JFrame {
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
         Principal p = new Principal();
         p.setVisible(true);
-        this.setVisible(false);
+        this.dispose();
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void HomeButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseEntered
@@ -771,6 +792,7 @@ public class Productos extends javax.swing.JFrame {
     private void LogOutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogOutButtonMouseClicked
         UserSession.setUsuario(null);
         this.dispose();
+        InactividadUtil.detenerTemporizador();
         login.setVisible(true);
     }//GEN-LAST:event_LogOutButtonMouseClicked
 
@@ -855,6 +877,10 @@ public class Productos extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_BoletaButtonMouseClicked
 
+    private void TipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoActionPerformed
+        ProductosController.listar(ProductosController.filtrarPorTipo(Tipo));
+    }//GEN-LAST:event_TipoActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -912,6 +938,7 @@ public class Productos extends javax.swing.JFrame {
     private javax.swing.JLabel ReportLbl;
     private javax.swing.JLabel Search;
     private javax.swing.JTable TableProducts;
+    private javax.swing.JComboBox<String> Tipo;
     private util.PanelRound UserButton;
     private javax.swing.JLabel UserLbl;
     private javax.swing.JPanel Users;
@@ -923,6 +950,7 @@ public class Productos extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private util.PanelRound menu;
     private javax.swing.JTextField txtSearch;

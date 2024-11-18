@@ -1,7 +1,9 @@
 package Controlador;
 
 import ModeloDAO.ProductoDAO;
+import ModeloDAO.TipoProductoDAO;
 import ModeloDTO.ProductoDTO;
+import ModeloDTO.TipoProductoDTO;
 import com.toedter.calendar.JDateChooser;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,12 +21,14 @@ import javax.swing.table.DefaultTableModel;
 public class ProductosController {
     //MODELODAO
     static ProductoDAO pd = new ProductoDAO();
+    static TipoProductoDAO tpd = new TipoProductoDAO();
     
     //MODELODTO
     static ProductoDTO p = new ProductoDTO();
     
     //ARREGLO
     static ArrayList<ProductoDTO> listaProductos = new ArrayList<>();
+    static ArrayList<TipoProductoDTO> listaTipos = new ArrayList<>();
     
     //MODELOS DE SPINNER
     static SpinnerNumberModel spnStock = new SpinnerNumberModel();
@@ -41,6 +45,31 @@ public class ProductosController {
         
         for (int i = 0; i < listaProductos.size(); i++) {
             c.addItem(listaProductos.get(i).getNombre());
+        }
+    }
+    
+    public static void mostrarTipos(JComboBox c){
+        c.removeAllItems();
+        
+        listaTipos = tpd.listarTodo();
+        
+        for (int i = 0; i < listaTipos.size(); i++) {
+            c.addItem(listaTipos.get(i).getNombre());
+        }
+    }
+    
+    public static void mostrarTipos(JComboBox c, boolean filtro){
+        
+        c.removeAllItems();
+        
+        listaTipos = tpd.listarTodo();
+        
+        if(filtro){
+            c.addItem("Todos");
+        }
+        
+        for (int i = 0; i < listaTipos.size(); i++) {
+            c.addItem(listaTipos.get(i).getNombre());
         }
     }
     
@@ -79,6 +108,7 @@ public class ProductosController {
     public static void mostrarCabecera(JTable t) {
         if (x.getColumnCount() == 0) {
             x.addColumn("Código");
+            x.addColumn("Tipo");
             x.addColumn("Nombre");
             x.addColumn("Stock");
             x.addColumn("Precio");
@@ -119,6 +149,7 @@ public class ProductosController {
 
             Object[] data = {
                 listaProductos.get(i).getCodigo(),
+                listaProductos.get(i).getTipo().getNombre(),
                 listaProductos.get(i).getNombre(),
                 listaProductos.get(i).getStock(),
                 listaProductos.get(i).getPrecio(),
@@ -159,6 +190,7 @@ public class ProductosController {
 
             Object[] data = {
                 datos.get(i).getCodigo(),
+                datos.get(i).getTipo().getNombre(),
                 datos.get(i).getNombre(),
                 datos.get(i).getStock(),
                 datos.get(i).getPrecio(),
@@ -198,6 +230,10 @@ public class ProductosController {
             case 4 ->
                 listaProductos.sort(Comparator.comparing(ProductoDTO::getVencimiento,
                         Comparator.nullsLast(Comparator.naturalOrder())));
+            case 5 ->
+                listaProductos.sort(Comparator.comparing(producto -> producto.getTipo().getNombre(),
+                    Comparator.nullsLast(Comparator.naturalOrder())
+                ));
             default ->
                 JOptionPane.showMessageDialog(null, "Seleccione una opción válida para ordenar");
         }
@@ -218,7 +254,9 @@ public class ProductosController {
     }
     
     //CRUD
-    public static boolean InsertarProducto(String nombre, int stock, float precio, boolean Vencimiento, JDateChooser d){
+    public static boolean InsertarProducto(String nombre, int stock, 
+            float precio, boolean Vencimiento, JDateChooser d,
+            JComboBox c){
         try {
             if (nombre.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Por favor complete todos los datos");
@@ -242,7 +280,10 @@ public class ProductosController {
                     return false;
                 }
             } 
-
+            
+            TipoProductoDTO t = tpd.listarUnoNom(c.getSelectedItem()+"");
+            
+            p.setTipo(t);
             p.setVencimiento(FechaVen);
             pd.insertar(p); 
             
@@ -253,7 +294,8 @@ public class ProductosController {
         }
     }
     
-    public static boolean EditarProducto(ProductoDTO p, String nombre, int stock, float precio, boolean Vencimiento, JDateChooser d){
+    public static boolean EditarProducto(ProductoDTO p, String nombre, int stock, 
+            float precio, boolean Vencimiento, JDateChooser d, JComboBox c){
         try {
             if (nombre.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Por favor complete todos los datos");
@@ -276,7 +318,10 @@ public class ProductosController {
                     return false;
                 }
             } 
-
+            
+            TipoProductoDTO t = tpd.listarUnoNom(c.getSelectedItem()+"");
+            
+            p.setTipo(t);
             p.setVencimiento(FechaVen);
             pd.actualizar(p); 
             
@@ -324,4 +369,22 @@ public class ProductosController {
                     "Alerta de Stock", JOptionPane.WARNING_MESSAGE);
         }
     }
+    
+    public static ArrayList<ProductoDTO> filtrarPorTipo(JComboBox c) {
+        listaProductos = pd.listarTodo();
+
+        if (c.getSelectedIndex() == 0) {
+            return listaProductos;
+        }
+
+        String tipo = c.getSelectedItem().toString();
+
+        listaProductos.removeIf(producto -> 
+            producto.getTipo() == null || 
+            !producto.getTipo().getNombre().equals(tipo)
+        );
+
+        return listaProductos;
+    }
+
 }

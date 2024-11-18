@@ -5,6 +5,7 @@ import ModeloDTO.ClienteDTO;
 import ModeloDTO.DepartamentoDTO;
 import ModeloDTO.DistritoDTO;
 import ModeloDTO.ProvinciaDTO;
+import ModeloDTO.TipoDocumentoDTO;
 import config.conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,20 +31,24 @@ public class ClienteDAO implements ClientInterface{
     DistritoDAO disd = new DistritoDAO();
     DistritoDTO dis;
     
+    TipoDocumentoDAO tdd = new TipoDocumentoDAO();
+    TipoDocumentoDTO td;
+    
     @Override
     public boolean insertar(ClienteDTO c) {
         try {
-            String sql = "insert into cliente (dnicli, nomcli, telcli, mailcli, dircli, iddis, idpro, iddep) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "insert into cliente (tipdoc, numdoc, nomcli, telcli, mailcli, dircli, iddis, idpro, iddep) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
-            ps.setString(1, c.getDNI());
-            ps.setString(2, c.getNombre());
-            ps.setString(3, c.getTelefono());
-            ps.setString(4, c.getCorreo());
-            ps.setString(5, c.getDireccion());
-            ps.setString(6, c.getDistrito().getCodigo());
-            ps.setString(7, c.getProvincia().getCodigo());
-            ps.setString(8, c.getDepartamento().getCodigo());
+            ps.setInt(1, c.getTipoDocumento().getCodigo());
+            ps.setString(2, c.getDNI());
+            ps.setString(3, c.getNombre());
+            ps.setString(4, c.getTelefono());
+            ps.setString(5, c.getCorreo());
+            ps.setString(6, c.getDireccion());
+            ps.setString(7, c.getDistrito().getCodigo());
+            ps.setString(8, c.getProvincia().getCodigo());
+            ps.setString(9, c.getDepartamento().getCodigo());
             ps.executeUpdate();
             conn.close();
         } catch (SQLException ex) {
@@ -55,17 +60,18 @@ public class ClienteDAO implements ClientInterface{
     @Override
     public boolean actualizar(ClienteDTO c) {
         try {
-            String sql = "update cliente set dnicli=?, nomcli=?, telcli=?, mailcli=?, dircli=?, iddis=?, idpro=?, iddep=? where idcli = "+c.getCodigo();
+            String sql = "update cliente set tipdoc=?, numdoc=?, nomcli=?, telcli=?, mailcli=?, dircli=?, iddis=?, idpro=?, iddep=? where idcli = "+c.getCodigo();
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
-            ps.setString(1, c.getDNI());
-            ps.setString(2, c.getNombre());
-            ps.setString(3, c.getTelefono());
-            ps.setString(4, c.getCorreo());
-            ps.setString(5, c.getDireccion());
-            ps.setString(6, c.getDistrito().getCodigo());
-            ps.setString(7, c.getProvincia().getCodigo());
-            ps.setString(8, c.getDepartamento().getCodigo());
+            ps.setInt(1, c.getTipoDocumento().getCodigo());
+            ps.setString(2, c.getDNI());
+            ps.setString(3, c.getNombre());
+            ps.setString(4, c.getTelefono());
+            ps.setString(5, c.getCorreo());
+            ps.setString(6, c.getDireccion());
+            ps.setString(7, c.getDistrito().getCodigo());
+            ps.setString(8, c.getProvincia().getCodigo());
+            ps.setString(9, c.getDepartamento().getCodigo());
             ps.executeUpdate();
             conn.close();
             conn.close();
@@ -102,12 +108,16 @@ public class ClienteDAO implements ClientInterface{
             while(rs.next()){
                 c = new ClienteDTO();
                 c.setCodigo(rs.getInt("idcli"));
-                c.setDNI(rs.getString("dnicli"));
+                c.setDNI(rs.getString("numdoc"));
                 c.setNombre(rs.getString("nomcli"));
                 c.setTelefono(rs.getString("telcli"));
                 c.setCorreo(rs.getString("mailcli"));
                 c.setDireccion(rs.getString("dircli"));
                 
+                td = new TipoDocumentoDTO();
+                td = tdd.listarUno(rs.getInt("tipdoc"));
+                c.setTipoDocumento(td);
+                                        
                 dis = new DistritoDTO();
                 dis = disd.listarUno(rs.getString("iddis"));
                 c.setDistrito(dis);
@@ -122,7 +132,7 @@ public class ClienteDAO implements ClientInterface{
             }
             conn.close();
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return c;
     }
@@ -139,12 +149,16 @@ public class ClienteDAO implements ClientInterface{
             while(rs.next()){
                 c = new ClienteDTO();
                 c.setCodigo(rs.getInt("idcli"));
-                c.setDNI(rs.getString("dnicli"));
+                c.setDNI(rs.getString("numdoc"));
                 c.setNombre(rs.getString("nomcli"));
                 c.setTelefono(rs.getString("telcli"));
                 c.setCorreo(rs.getString("mailcli"));
                 c.setDireccion(rs.getString("dircli"));
                 
+                td = new TipoDocumentoDTO();
+                td = tdd.listarUno(rs.getInt("tipdoc"));
+                c.setTipoDocumento(td);
+                                        
                 dis = new DistritoDTO();
                 dis = disd.listarUno(rs.getString("iddis"));
                 c.setDistrito(dis);
@@ -159,7 +173,7 @@ public class ClienteDAO implements ClientInterface{
             }
             conn.close();
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return c;
     }
@@ -175,12 +189,16 @@ public class ClienteDAO implements ClientInterface{
             while(rs.next()){
                 c = new ClienteDTO();
                 c.setCodigo(rs.getInt("idcli"));
-                c.setDNI(rs.getString("dnicli"));
+                c.setDNI(rs.getString("numdoc"));
                 c.setNombre(rs.getString("nomcli"));
                 c.setTelefono(rs.getString("telcli"));
                 c.setCorreo(rs.getString("mailcli"));
                 c.setDireccion(rs.getString("dircli"));
                 
+                td = new TipoDocumentoDTO();
+                td = tdd.listarUno(rs.getInt("tipdoc"));
+                c.setTipoDocumento(td);
+                                        
                 dis = new DistritoDTO();
                 dis = disd.listarUno(rs.getString("iddis"));
                 c.setDistrito(dis);
@@ -197,7 +215,7 @@ public class ClienteDAO implements ClientInterface{
             }
             conn.close();
         } catch (SQLException ex) {
-            Logger.getLogger(DepartamentoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return vc;
     }
@@ -205,7 +223,7 @@ public class ClienteDAO implements ClientInterface{
     public ClienteDTO listarUnoDNI(String dni) {
         ClienteDTO c = null;
         try {
-            String sql = "select * from cliente where dnicli = ?";
+            String sql = "select * from cliente where numdoc = ?";
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
             ps.setString(1, dni);
@@ -213,12 +231,16 @@ public class ClienteDAO implements ClientInterface{
             while(rs.next()){
                 c = new ClienteDTO();
                 c.setCodigo(rs.getInt("idcli"));
-                c.setDNI(rs.getString("dnicli"));
+                c.setDNI(rs.getString("numdoc"));
                 c.setNombre(rs.getString("nomcli"));
                 c.setTelefono(rs.getString("telcli"));
                 c.setCorreo(rs.getString("mailcli"));
                 c.setDireccion(rs.getString("dircli"));
                 
+                td = new TipoDocumentoDTO();
+                td = tdd.listarUno(rs.getInt("tipdoc"));
+                c.setTipoDocumento(td);
+                                        
                 dis = new DistritoDTO();
                 dis = disd.listarUno(rs.getString("iddis"));
                 c.setDistrito(dis);
@@ -233,7 +255,7 @@ public class ClienteDAO implements ClientInterface{
             }
             conn.close();
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return c;
     }

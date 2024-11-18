@@ -12,6 +12,7 @@ import Vistas.Cliente.Clientes;
 import Vistas.Login;
 import Vistas.Principal;
 import Vistas.Producto.Productos;
+import Vistas.Reportes.Reportes;
 import Vistas.Usuario.Usuarios;
 import config.UserSession;
 import java.awt.Color;
@@ -20,42 +21,44 @@ import javax.swing.JOptionPane;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import util.ColorMethods;
 import util.ImageLoader;
+import util.InactividadUtil;
 
 public class Venta extends javax.swing.JFrame {
+
     static Login login = new Login();
     static UsuarioDTO usuario = UserSession.getUsuario();
     static boolean Ven = false;
-   
+
     ClienteDTO cliente = new ClienteDTO();
     ProductoDTO producto;
-    
+
     public Venta() {
         initComponents();
         this.setLocationRelativeTo(null);
-        
+
         ColorMethods.Entered(VentasButton);
-        
+
         cliente = new ClienteDTO();
         producto = new ProductoDTO();
         usuario = UserSession.getUsuario();
         Ven = false;
-        
+
         AutoCompleteDecorator.decorate(cbxClient);
         AutoCompleteDecorator.decorate(cbxProducts);
         VentaController.ModelSpinnerCantidad(spnCantidad);
         VentaController.mostrarCabecera(TableVenta);
-        
+
         ClienteController.mostrarClientes(cbxClient);
         ProductosController.mostrarProductos(cbxProducts);
-        
+
         txtTotal.setText(VentaController.calcularTotal(TableVenta) + "");
-        
+
         if (usuario.getRol().getCodigo() == 1) {
             Ven = true;
             ReportButton.setBackground(new Color(110, 16, 80));
             UserButton.setBackground(new Color(110, 16, 80));
         }
-        
+
         //IMAGENES
         ImageLoader.setImageToLabelFromResources(bg, "/imagenes/fondo.png");
         ImageLoader.setImageToLabelFromResources(HomeLbl, "/imagenes/home.png");
@@ -66,7 +69,7 @@ public class Venta extends javax.swing.JFrame {
         ImageLoader.setImageToLabelFromResources(UserLbl, "/imagenes/user.png");
         ImageLoader.setImageToLabelFromResources(ReportLbl, "/imagenes/report.png");
         ImageLoader.setImageToLabelFromResources(Logoutlbl, "/imagenes/logout.png");
-        
+
         //TOOLTIPS
         HomeButton.setToolTipText("Home");
         ProductButton.setToolTipText("Productos");
@@ -75,23 +78,25 @@ public class Venta extends javax.swing.JFrame {
         ClientesButton.setToolTipText("Clientes");
         UserButton.setToolTipText("Usuarios");
         ReportButton.setToolTipText("Reportes");
+
+        InactividadUtil.activarTemporizador(this);
     }
-    
-    public Float calcularSubtotal(Float precio){
+
+    public Float calcularSubtotal(Float precio) {
         int cantidad = (Integer) spnCantidad.getValue();
         return precio * cantidad;
     }
-    
+
     public void mostrarDatosProducto() {
         txtPrecio.setText(producto.getPrecio() + "");
-        
+
         int StockRestante = VentaController.calcularStockRestante(producto, TableVenta);
-        txtStock.setText(StockRestante+"");
-        
+        txtStock.setText(StockRestante + "");
+
         VentaController.MaxSpinnerProducto(spnCantidad, StockRestante);
 
         txtSubtotal.setText(calcularSubtotal(producto.getPrecio()) + "");
-        
+
         if (producto.getVencimiento() == null) {
             txtFecha.setText("No vence");
         } else {
@@ -101,7 +106,7 @@ public class Venta extends javax.swing.JFrame {
         }
 
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -520,7 +525,7 @@ public class Venta extends javax.swing.JFrame {
         jLabel7.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("BUSCAR POR DNI");
+        jLabel7.setText("BUSCAR POR N° DOC");
 
         javax.swing.GroupLayout btnSearchLayout = new javax.swing.GroupLayout(btnSearch);
         btnSearch.setLayout(btnSearchLayout);
@@ -799,21 +804,23 @@ public class Venta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ReportButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportButtonMouseClicked
-        if (!Ven){
-
+        if (!Ven) {
+            Reportes r = new Reportes();
+            r.setVisible(true);
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Usted no cuenta con los permisos para ingresar a esta sección");
         }
     }//GEN-LAST:event_ReportButtonMouseClicked
 
     private void ReportButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportButtonMouseEntered
-        if(!Ven){
+        if (!Ven) {
             ColorMethods.Entered(ReportButton);
         }
     }//GEN-LAST:event_ReportButtonMouseEntered
 
     private void ReportButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ReportButtonMouseExited
-        if(!Ven){
+        if (!Ven) {
             ColorMethods.Exited(ReportButton);;
         }
     }//GEN-LAST:event_ReportButtonMouseExited
@@ -823,7 +830,7 @@ public class Venta extends javax.swing.JFrame {
     }//GEN-LAST:event_UserButtonFocusGained
 
     private void UserButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UserButtonMouseClicked
-        if (!Ven){
+        if (!Ven) {
             Usuarios u = new Usuarios();
             u.setVisible(true);
             this.dispose();
@@ -833,13 +840,13 @@ public class Venta extends javax.swing.JFrame {
     }//GEN-LAST:event_UserButtonMouseClicked
 
     private void UserButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UserButtonMouseEntered
-        if(!Ven){
+        if (!Ven) {
             ColorMethods.Entered(UserButton);
         }
     }//GEN-LAST:event_UserButtonMouseEntered
 
     private void UserButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UserButtonMouseExited
-        if(!Ven){
+        if (!Ven) {
             ColorMethods.Exited(UserButton);
         }
     }//GEN-LAST:event_UserButtonMouseExited
@@ -871,7 +878,7 @@ public class Venta extends javax.swing.JFrame {
     }//GEN-LAST:event_VentasButtonMouseEntered
 
     private void VentasButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_VentasButtonMouseExited
-     
+
     }//GEN-LAST:event_VentasButtonMouseExited
 
     private void ProductButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ProductButtonMouseEntered
@@ -885,7 +892,7 @@ public class Venta extends javax.swing.JFrame {
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
         Principal p = new Principal();
         p.setVisible(true);
-        this.setVisible(false);
+        this.dispose();
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void HomeButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseEntered
@@ -899,7 +906,7 @@ public class Venta extends javax.swing.JFrame {
     private void DeleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteButtonMouseClicked
         VentaController.QuitarTabla(TableVenta);
         mostrarDatosProducto();
-        txtTotal.setText(VentaController.calcularTotal(TableVenta)+"");
+        txtTotal.setText(VentaController.calcularTotal(TableVenta) + "");
     }//GEN-LAST:event_DeleteButtonMouseClicked
 
     private void DeleteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteButtonMouseEntered
@@ -907,12 +914,13 @@ public class Venta extends javax.swing.JFrame {
     }//GEN-LAST:event_DeleteButtonMouseEntered
 
     private void DeleteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteButtonMouseExited
-        ColorMethods.Exited(DeleteButton, new Color(255,96,205));
+        ColorMethods.Exited(DeleteButton, new Color(255, 96, 205));
     }//GEN-LAST:event_DeleteButtonMouseExited
 
     private void LogOutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogOutButtonMouseClicked
         UserSession.setUsuario(null);
         this.dispose();
+        InactividadUtil.detenerTemporizador();
         login.setVisible(true);
     }//GEN-LAST:event_LogOutButtonMouseClicked
 
@@ -928,10 +936,10 @@ public class Venta extends javax.swing.JFrame {
         int cantidad = (Integer) spnCantidad.getValue();
         float subtotal = Float.parseFloat(txtSubtotal.getText());
         int stockRestante = Integer.parseInt(txtStock.getText());
-        
+
         VentaController.AñadirDetalle(producto, cantidad, subtotal, stockRestante, TableVenta);
         mostrarDatosProducto();
-        txtTotal.setText(VentaController.calcularTotal(TableVenta)+"");
+        txtTotal.setText(VentaController.calcularTotal(TableVenta) + "");
     }//GEN-LAST:event_AddButtonMouseClicked
 
     private void AddButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddButtonMouseEntered
@@ -959,15 +967,15 @@ public class Venta extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchMouseEntered
 
     private void btnSearchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseExited
-        ColorMethods.Exited(btnSearch, new Color(255,96,205));
+        ColorMethods.Exited(btnSearch, new Color(255, 96, 205));
     }//GEN-LAST:event_btnSearchMouseExited
 
     private void CancelBtnMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelBtnMouseExited
-        ColorMethods.Exited(CancelBtn, new Color(255,51,51));
+        ColorMethods.Exited(CancelBtn, new Color(255, 51, 51));
     }//GEN-LAST:event_CancelBtnMouseExited
 
     private void CancelBtnMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelBtnMouseEntered
-        ColorMethods.Entered(CancelBtn, new Color(211,54,30));
+        ColorMethods.Entered(CancelBtn, new Color(211, 54, 30));
     }//GEN-LAST:event_CancelBtnMouseEntered
 
     private void CancelBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelBtnMouseClicked
@@ -1028,19 +1036,19 @@ public class Venta extends javax.swing.JFrame {
     }//GEN-LAST:event_txtStockActionPerformed
 
     private void cbxClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxClientActionPerformed
-        if(cbxClient.getItemCount()>0)
+        if (cbxClient.getItemCount() > 0)
             cliente = ClienteController.BuscarClienteCBX(cbxClient);
     }//GEN-LAST:event_cbxClientActionPerformed
 
     private void cbxProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxProductsActionPerformed
-        if(cbxProducts.getItemCount()>0){
+        if (cbxProducts.getItemCount() > 0) {
             producto = ProductosController.BuscarProductoCBX(cbxProducts);
             mostrarDatosProducto();
         }
     }//GEN-LAST:event_cbxProductsActionPerformed
 
     private void spnCantidadStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnCantidadStateChanged
-        txtSubtotal.setText(calcularSubtotal(producto.getPrecio())+"");
+        txtSubtotal.setText(calcularSubtotal(producto.getPrecio()) + "");
     }//GEN-LAST:event_spnCantidadStateChanged
 
     private void ProductButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ProductButtonMouseClicked
@@ -1088,7 +1096,7 @@ public class Venta extends javax.swing.JFrame {
                 if (usuario == null) {
                     JOptionPane.showMessageDialog(null, "Ocurrió un error en el inicio de sesión",
                             "Error", JOptionPane.ERROR_MESSAGE);
-                    
+
                     login.setVisible(true);
                 } else {
                     new Venta().setVisible(true);

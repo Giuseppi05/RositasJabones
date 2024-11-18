@@ -3,11 +3,13 @@ package ModeloDTO;
 import java.util.Date;
 
 public class ProductoDTO {
-  private int Codigo;
-  private int Stock;
-  private Date Vencimiento;
+
+    private int Codigo;
+    private int Stock;
+    private Date Vencimiento;
     private String Nombre;
     private Float Precio;
+    private TipoProductoDTO tipo;
 
     /**
      * @return the Codigo
@@ -78,6 +80,19 @@ public class ProductoDTO {
     public void setPrecio(Float Precio) {
         this.Precio = Precio;
     }
-  
-  
+
+    /**
+     * @return the tipo
+     */
+    public TipoProductoDTO getTipo() {
+        return tipo;
+    }
+
+    /**
+     * @param tipo the tipo to set
+     */
+    public void setTipo(TipoProductoDTO tipo) {
+        this.tipo = tipo;
+    }
+
 }

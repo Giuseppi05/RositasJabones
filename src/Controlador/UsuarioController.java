@@ -5,6 +5,8 @@ import ModeloDAO.UsuarioDAO;
 import ModeloDTO.RolDTO;
 import ModeloDTO.UsuarioDTO;
 import config.UserSession;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import javax.swing.JCheckBox;
@@ -45,21 +47,6 @@ public class UsuarioController {
         return contraseña.equals(Verificacion);
     }
     
-    public static boolean VerificarVacio(String nombre, String correo, String rol, String pass, String passVer, JComboBox c) {
-        return nombre.isEmpty() || 
-               correo.isEmpty() || 
-               rol.isEmpty() ||
-               pass.isEmpty() ||
-               passVer.isEmpty() ||
-               c.getItemCount() == 0;
-    }
-    
-    public static boolean VerificarVacio( String pass, String passVer) {
-        return 
-               pass.isEmpty() ||
-               passVer.isEmpty();
-    }
-    
     public static boolean VerificarVacio(String nombre, String correo, String rol, JComboBox c) {
         return nombre.isEmpty() || 
                correo.isEmpty() || 
@@ -78,9 +65,9 @@ public class UsuarioController {
     }
 
     //METODOS CRUD
-    public static boolean InsertarUsuario(String nombre, String correo, String rol, String pass, String passVer, JComboBox c) {
+    public static boolean InsertarUsuario(String nombre, String correo, String rol, JComboBox c) {
         try {
-            if (VerificarVacio(nombre, correo, rol, pass, passVer, c)) {
+            if (VerificarVacio(nombre, correo, rol, c)) {
                 JOptionPane.showMessageDialog(null, "Por favor ingrese todos los datos");
                 return false;
             }
@@ -95,21 +82,11 @@ public class UsuarioController {
                 return false;
             }
 
-            if (!ValidarPassword(pass)) {
-                JOptionPane.showMessageDialog(null, "La contraseña debe contener al menos 8 dígitos y un número");
-                return false;
-            }
-
-            if (!VerificarContraseña(pass, passVer)) {
-                JOptionPane.showMessageDialog(null, "Las contraseñas ingresadas son diferentes");
-                return false;
-            }
-
-            String ph = BCrypt.hashpw(pass, BCrypt.gensalt());
-
             u.setNombre(nombre);
             u.setCorreo(correo);
-            u.setContraseña(ph);
+            u.setContraseña(null);
+            u.setClaveTemp(null);
+            u.setFechaTemp(null);
 
             RolDTO r = rd.listarUnoNom(rol);
             u.setRol(r);
@@ -123,7 +100,7 @@ public class UsuarioController {
         }
     }
     
-    public static boolean EditarUsuario(UsuarioDTO u, String nombre, String correo, String rol, String pass, String passVer, JComboBox c, JCheckBox ch){
+    public static boolean EditarUsuario(UsuarioDTO u, String nombre, String correo, String rol, JComboBox c){
         try {
             if (VerificarVacio(nombre, correo, rol, c)) {
                 JOptionPane.showMessageDialog(null, "Por favor ingrese todos los datos");
@@ -141,29 +118,14 @@ public class UsuarioController {
             }
             
             String ph = u.getContraseña();
-            
-            if(ch.isSelected()){
-                if (VerificarVacio(pass, passVer)) {
-                    JOptionPane.showMessageDialog(null, "Por favor ingrese todos los datos");
-                    return false;
-                }
-                
-                if (!ValidarPassword(pass)) {
-                    JOptionPane.showMessageDialog(null, "La contraseña debe contener al menos 8 dígitos y un número");
-                    return false;
-                }
-
-                if (!VerificarContraseña(pass, passVer)) {
-                    JOptionPane.showMessageDialog(null, "Las contraseñas ingresadas son diferentes");
-                    return false;
-                }
-                
-                ph = BCrypt.hashpw(pass, BCrypt.gensalt());
-            }
+            String ct = u.getClaveTemp();
+            LocalDateTime ft = u.getFechaTemp();
 
             u.setNombre(nombre);
             u.setCorreo(correo);
             u.setContraseña(ph);
+            u.setClaveTemp(ct);
+            u.setFechaTemp(ft);
 
             RolDTO r = rd.listarUnoNom(rol);
             u.setRol(r);
@@ -276,6 +238,42 @@ public class UsuarioController {
         } else {
             JOptionPane.showMessageDialog(null, "Seleccione un elemento de la tabla de usuarios");
             return null;
+        }
+    }
+    
+    public static boolean GenerarClave(JTable t){
+        UsuarioDTO user = SeleccionEdicion(t);
+        
+        if(user == null){
+            return false;
+        }
+        
+        try {
+            String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=<>?";
+        
+            SecureRandom random = new SecureRandom();
+            String clave = "";
+
+            for (int i = 0; i < 6; i++) {
+                int index = random.nextInt(caracteres.length());
+                clave += caracteres.charAt(index);
+            }
+
+            LocalDateTime fecha = LocalDateTime.now().plusMinutes(30);
+
+            String hash = BCrypt.hashpw(clave, BCrypt.gensalt());
+
+            user.setClaveTemp(hash);
+            user.setFechaTemp(fecha);
+
+            ud.actualizar(user);
+
+            JOptionPane.showMessageDialog(null, "Su clave temporal es: "+clave+
+                    "\nEsta clave solo permanecerá activa por 30 minutos");
+            return true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error: "+e);
+            return false;
         }
     }
 }

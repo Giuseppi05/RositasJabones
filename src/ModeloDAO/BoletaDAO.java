@@ -32,7 +32,7 @@ public class BoletaDAO implements BoletaInterface{
     @Override
     public boolean insertar(BoletaDTO b) {
         try {
-            String sql = "INSERT INTO boleta (idcli, tolbol, fecbol, idusu, stabol) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO boleta (idcli, tolbol, fecbol, idusu, stabol) VALUES (?, ?, ?, ?, ?)";
             conn = con.getConexion();
             ps = conn.prepareStatement(sql);
             ps.setInt(1, b.getCliente().getCodigo());

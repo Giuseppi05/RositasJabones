@@ -110,23 +110,40 @@ public class BoletaController {
         return listaBoletas;
     }
     
-    public static ArrayList<BoletaDTO> filtrarPorFecha(JDateChooser dateChooser) {
-        Date fechaSeleccionada = dateChooser.getDate(); 
+    public static ArrayList<BoletaDTO> filtrarPorFecha(JDateChooser inicio, JDateChooser fin) {
+        Date fechaInicio = inicio.getDate();
+        Date fechaFin = fin.getDate();
         listaBoletas = bd.listarTodo();
 
-        if (fechaSeleccionada != null) {
-            LocalDate fechaFiltro = fechaSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-            listaBoletas = (ArrayList<BoletaDTO>) listaBoletas.stream()
-                    .filter(boleta -> boleta.getFecha().toLocalDate().equals(fechaFiltro))
-                    .collect(Collectors.toList());
-            
-        } else {
+        if (fechaInicio == null || fechaFin == null) {
             JOptionPane.showMessageDialog(null, "Por favor, seleccione una fecha válida.");
+            return null;
         }
-        
+
+        if (fechaFin.before(fechaInicio)) {
+            JOptionPane.showMessageDialog(null, "La fecha de fin debe ser mayor o igual a la fecha de inicio.");
+            return null;
+        }
+
+        LocalDate localFechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localFechaFin = fechaFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        if (localFechaInicio.equals(localFechaFin)) {
+            listaBoletas = (ArrayList<BoletaDTO>) listaBoletas.stream()
+                    .filter(boleta -> boleta.getFecha().toLocalDate().equals(localFechaInicio))
+                    .collect(Collectors.toList());
+        } else {
+            listaBoletas = (ArrayList<BoletaDTO>) listaBoletas.stream()
+                    .filter(boleta -> {
+                        LocalDate fechaBoleta = boleta.getFecha().toLocalDate();
+                        return !fechaBoleta.isBefore(localFechaInicio) && !fechaBoleta.isAfter(localFechaFin);
+                    })
+                    .collect(Collectors.toList());
+        }
+
         return listaBoletas;
     }
+
     
     public static void listarDetalleBoleta(BoletaDTO b, JTextField fechatxt, JTextField horatxt){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

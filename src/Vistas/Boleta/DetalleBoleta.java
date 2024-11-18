@@ -12,6 +12,7 @@ import config.UserSession;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import util.ColorMethods;
+import util.InactividadUtil;
 import util.PDFExporter;
 
 public class DetalleBoleta extends javax.swing.JFrame {
@@ -40,6 +41,8 @@ public class DetalleBoleta extends javax.swing.JFrame {
         BoletaController.listarDetalleBoleta(b, txtFecha, txtHora);
         
         txtTotal.setText(b.getTotal()+"");
+        
+        InactividadUtil.activarTemporizador(this);
     }
 
     @SuppressWarnings("unchecked")

@@ -8,6 +8,7 @@ import config.UserSession;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import util.ColorMethods;
+import util.InactividadUtil;
 
 
 public class EditProduct extends javax.swing.JFrame {
@@ -23,10 +24,17 @@ public class EditProduct extends javax.swing.JFrame {
         
         ProductosController.ModelSpinnerPre(SpnPre);
         ProductosController.ModelSpinnerStock(SpnStk);
+        ProductosController.mostrarTipos(tipo);
         
         txtNom.setText(producto.getNombre());
         SpnStk.setValue(producto.getStock());
         SpnPre.setValue(producto.getPrecio());
+        
+        for (int i = 0; i < tipo.getItemCount(); i++) {
+            if (producto.getTipo().getNombre().equals(tipo.getItemAt(i))) {
+                tipo.setSelectedIndex(i);
+            }
+        }
         
         if(producto.getVencimiento() != null){
             chkVencimiento.setSelected(true);
@@ -36,6 +44,8 @@ public class EditProduct extends javax.swing.JFrame {
             chkVencimiento.setSelected(false);
             DateSelect.setDate(null);
         }
+        
+        InactividadUtil.activarTemporizador(this);
     }
     
     public void limpiar(){
@@ -69,6 +79,8 @@ public class EditProduct extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         chkVencimiento = new javax.swing.JCheckBox();
         DateSelect = new com.toedter.calendar.JDateChooser();
+        jLabel10 = new javax.swing.JLabel();
+        tipo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -213,6 +225,9 @@ public class EditProduct extends javax.swing.JFrame {
 
         DateSelect.setEnabled(false);
 
+        jLabel10.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
+        jLabel10.setText("Tipo de producto:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -236,18 +251,21 @@ public class EditProduct extends javax.swing.JFrame {
                                 .addGap(182, 182, 182)
                                 .addComponent(CancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(SaveButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel1)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jSeparator2)
-                                    .addComponent(txtNom, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                    .addGap(1, 1, 1)
-                                    .addComponent(jLabel8)
-                                    .addGap(45, 45, 45)
-                                    .addComponent(SpnStk, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel1)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jSeparator2)
+                                .addComponent(txtNom, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addComponent(jLabel8)
+                                .addGap(45, 45, 45)
+                                .addComponent(SpnStk, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tipo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
@@ -260,7 +278,11 @@ public class EditProduct extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(12, 12, 12)
                 .addComponent(jLabel3)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtNom, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -285,7 +307,7 @@ public class EditProduct extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(SaveButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addGap(24, 24, 24))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -296,7 +318,9 @@ public class EditProduct extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -312,7 +336,7 @@ public class EditProduct extends javax.swing.JFrame {
         float precio = ((Number) SpnPre.getValue()).floatValue();
         boolean Vencimiento = chkVencimiento.isSelected();
         
-        if(ProductosController.EditarProducto(producto, nombre, stock, precio, Vencimiento, DateSelect)){
+        if(ProductosController.EditarProducto(producto, nombre, stock, precio, Vencimiento, DateSelect, tipo)){
             JOptionPane.showMessageDialog(null, "Producto actualizado correctamente");
             
             Productos pro = new Productos();
@@ -403,6 +427,7 @@ public class EditProduct extends javax.swing.JFrame {
     private javax.swing.JSpinner SpnStk;
     private javax.swing.JCheckBox chkVencimiento;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -414,6 +439,7 @@ public class EditProduct extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator2;
     private util.PanelRound panelRound1;
+    private javax.swing.JComboBox<String> tipo;
     private javax.swing.JTextField txtNom;
     // End of variables declaration//GEN-END:variables
 }

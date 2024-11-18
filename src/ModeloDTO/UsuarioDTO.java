@@ -1,11 +1,15 @@
 package ModeloDTO;
 
+import java.time.LocalDateTime;
+
 public class UsuarioDTO {
     private int codigo;
     private String nombre;
     private String correo;
     private String contraseña;
     private RolDTO rol;
+    private String ClaveTemp;
+    private LocalDateTime FechaTemp;
 
     /**
      * @return the codigo
@@ -75,6 +79,34 @@ public class UsuarioDTO {
      */
     public void setRol(RolDTO rol) {
         this.rol = rol;
+    }
+
+    /**
+     * @return the ClaveTemp
+     */
+    public String getClaveTemp() {
+        return ClaveTemp;
+    }
+
+    /**
+     * @param ClaveTemp the ClaveTemp to set
+     */
+    public void setClaveTemp(String ClaveTemp) {
+        this.ClaveTemp = ClaveTemp;
+    }
+
+    /**
+     * @return the FechaTemp
+     */
+    public LocalDateTime getFechaTemp() {
+        return FechaTemp;
+    }
+
+    /**
+     * @param FechaTemp the FechaTemp to set
+     */
+    public void setFechaTemp(LocalDateTime FechaTemp) {
+        this.FechaTemp = FechaTemp;
     }
     
     
